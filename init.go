@@ -14,13 +14,6 @@ func DefaultNew(f func() SLogConfig) (*Logger, error) {
 	logger.cfg = &cfg
 	logger.SetSliceType(cfg.SplitType)
 
-	switch cfg.SplitType {
-	case SPLIT_TYPE_FILE_SIZE:
-		logger.SetMaxSize(cfg.Condition)
-	case SPLIT_TYPE_TIME_CYCLE:
-		logger.SetIntervalsTime(cfg.Condition)
-	}
-
 	logger.SetDebug(cfg.Debug)
 
 	writer := new(logWriter)
@@ -28,7 +21,31 @@ func DefaultNew(f func() SLogConfig) (*Logger, error) {
 	if cfg.FileNameHandler == nil {
 		cfg.FileNameHandler = cfg.name_handler
 	}
-	file, err := os.Create(cfg.FileNameHandler(0))
+	filename := cfg.FileNameHandler(0)
+
+	file := &os.File{}
+	file_info, err := os.Stat(filename)
+	if err != nil {
+		if os.IsNotExist(err) {
+			file, err = os.Create(filename)
+		} else {
+			return nil, err
+		}
+	} else {
+		file, err = os.OpenFile(filename, os.O_APPEND, os.ModeAppend)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	switch cfg.SplitType {
+	case SPLIT_TYPE_FILE_SIZE:
+		logger.SetMaxSize(cfg.Condition)
+		logger.size = file_info.Size()
+	case SPLIT_TYPE_TIME_CYCLE:
+		logger.SetIntervalsTime(cfg.Condition)
+	}
+
 	if err != nil {
 		return nil, err
 	}

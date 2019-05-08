@@ -7,8 +7,8 @@ import (
 func TestSlog(t *testing.T) {
 
 	slog, err := DefaultNew(func() SLogConfig {
-		cfg := DefaultSLogConfig()
-		cfg.SplitType = SPLIT_TYPE_TIME_CYCLE
+		cfg := TestSLogConfig()
+		cfg.SplitType = SPLIT_TYPE_FILE_SIZE
 		cfg.Condition = 1
 		return cfg
 	})

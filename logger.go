@@ -17,7 +17,7 @@ type Logger struct {
 	max_size       int64 //the number is KB, if max size > log file size then segmentation the log file
 	intervals_time int64 //segmentation log file cycle
 	btime          int64 //begin time
-	size           int64 //the number is B
+	size           int64 //the number is byte
 	writer         Writer
 	mu             sync.RWMutex
 }
