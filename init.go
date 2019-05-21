@@ -7,10 +7,10 @@ import (
 
 // is default new function
 // writer are configured by default
-func DefaultNew(f func() SLogConfig) (*Logger, error) {
+func DefaultNew(f func() SLogConfig) (*LoggerS, error) {
 
 	cfg := f()
-	logger := new(Logger)
+	logger := new(LoggerS)
 	logger.cfg = &cfg
 	logger.SetSliceType(cfg.SplitType)
 
@@ -41,7 +41,9 @@ func DefaultNew(f func() SLogConfig) (*Logger, error) {
 	switch cfg.SplitType {
 	case SPLIT_TYPE_FILE_SIZE:
 		logger.SetMaxSize(cfg.Condition)
-		logger.size = file_info.Size()
+		if file_info != nil {
+			logger.size = file_info.Size()
+		}
 	case SPLIT_TYPE_TIME_CYCLE:
 		logger.SetIntervalsTime(cfg.Condition)
 	}
