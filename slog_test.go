@@ -6,19 +6,20 @@ import (
 
 func TestSlog(t *testing.T) {
 
-	slog, err := DefaultNew(func() SLogConfig {
+	var err error
+	Logger, err = DefaultNew(func() SLogConfig {
 		cfg := TestSLogConfig()
 		cfg.SplitType = SPLIT_TYPE_FILE_SIZE
 		cfg.Condition = 1
 		return cfg
 	})
 	if err != nil {
-		panic(slog)
+		panic(err)
 	}
 
-	slog.Info("test info", "aaaaa")
-	slog.Debug("test debug", "debug")
-	slog.Warn("test warn", "warn")
-	slog.Error("test error ", "error")
-	slog.Fatal("test fatal", "fatal")
+	Logger.Info("test info", "aaaaa")
+	Logger.Debug("test debug", "debug")
+	Logger.Warn("test warn", "warn")
+	Logger.Error("test error ", "error")
+	Logger.Fatal("test fatal", "fatal")
 }

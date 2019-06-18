@@ -8,11 +8,13 @@ import (
 	"time"
 )
 
-type Logger struct {
+var Logger *LoggerS
+
+type LoggerS struct {
 	*log.Logger
 	cfg            *SLogConfig //save setting
 	debug          bool
-	split_type     uint8 //will determine Logger how to work
+	split_type     uint8 //will determine LoggerS how to work
 	count          int   //number of split
 	max_size       int64 //the number is KB, if max size > log file size then segmentation the log file
 	intervals_time int64 //segmentation log file cycle
@@ -22,23 +24,27 @@ type Logger struct {
 	mu             sync.RWMutex
 }
 
-func (l *Logger) SetDebug(debug bool) {
+func (l *LoggerS) GetWriter() Writer {
+	return l.writer
+}
+
+func (l *LoggerS) SetDebug(debug bool) {
 	l.debug = debug
 }
 
-func (l *Logger) SetMaxSize(max int64) {
+func (l *LoggerS) SetMaxSize(max int64) {
 	l.max_size = max
 }
 
-func (l *Logger) SetIntervalsTime(intervals int64) {
+func (l *LoggerS) SetIntervalsTime(intervals int64) {
 	l.intervals_time = intervals
 }
 
-func (l *Logger) SetSliceType(t uint8) {
+func (l *LoggerS) SetSliceType(t uint8) {
 	l.split_type = t
 }
 
-func (l *Logger) Output(level uint8, skip int, s string) {
+func (l *LoggerS) Output(level uint8, skip int, s string) {
 
 	if level < l.cfg.Level {
 		return
@@ -96,25 +102,25 @@ func (l *Logger) Output(level uint8, skip int, s string) {
 
 }
 
-func (l *Logger) Println(i ...interface{}) {
+func (l *LoggerS) Println(i ...interface{}) {
 	l.Output(1<<8-1, 3, fmt.Sprintln("[Println]", i))
 }
-func (l *Logger) Debug(i ...interface{}) {
+func (l *LoggerS) Debug(i ...interface{}) {
 	l.Output(LOG_LEVEL_DEBUG, 3, fmt.Sprintln("[Debug]", i))
 }
 
-func (l *Logger) Info(i ...interface{}) {
+func (l *LoggerS) Info(i ...interface{}) {
 	l.Output(LOG_LEVEL_INFO, 3, fmt.Sprintln("[Info]", i))
 }
 
-func (l *Logger) Error(i ...interface{}) {
+func (l *LoggerS) Error(i ...interface{}) {
 	l.Output(LOG_LEVEL_ERROR, 3, fmt.Sprintln("[Error]", i))
 }
 
-func (l *Logger) Warn(i ...interface{}) {
+func (l *LoggerS) Warn(i ...interface{}) {
 	l.Output(LOG_LEVEL_WARN, 3, fmt.Sprintln("[Warn]", i))
 }
 
-func (l *Logger) Fatal(i ...interface{}) {
+func (l *LoggerS) Fatal(i ...interface{}) {
 	l.Output(LOG_LEVEL_FATAL, 3, fmt.Sprintln("[Fatal]", i))
 }
