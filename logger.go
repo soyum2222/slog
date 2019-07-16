@@ -44,10 +44,10 @@ func (l *LoggerS) SetSliceType(t uint8) {
 	l.split_type = t
 }
 
-func (l *LoggerS) Output(level uint8, skip int, s string) {
+func (l *LoggerS) Output(level uint8, skip int, s string) error {
 
 	if level < l.cfg.Level {
-		return
+		return nil
 	}
 	flag := false
 	//check split type
@@ -98,29 +98,31 @@ func (l *LoggerS) Output(level uint8, skip int, s string) {
 
 	l.mu.RLock()
 	defer l.mu.RUnlock()
-	l.Logger.Output(skip, s)
+	err := l.Logger.Output(skip, s)
+
+	return err
 
 }
 
-func (l *LoggerS) Println(i ...interface{}) {
-	l.Output(1<<8-1, 3, fmt.Sprintln("[Println]", i))
+func (l *LoggerS) Println(i ...interface{}) error {
+	return l.Output(1<<8-1, 3, fmt.Sprintln("[Println]", i))
 }
-func (l *LoggerS) Debug(i ...interface{}) {
-	l.Output(LOG_LEVEL_DEBUG, 3, fmt.Sprintln("[Debug]", i))
-}
-
-func (l *LoggerS) Info(i ...interface{}) {
-	l.Output(LOG_LEVEL_INFO, 3, fmt.Sprintln("[Info]", i))
+func (l *LoggerS) Debug(i ...interface{}) error {
+	return l.Output(LOG_LEVEL_DEBUG, 3, fmt.Sprintln("[Debug]", i))
 }
 
-func (l *LoggerS) Error(i ...interface{}) {
-	l.Output(LOG_LEVEL_ERROR, 3, fmt.Sprintln("[Error]", i))
+func (l *LoggerS) Info(i ...interface{}) error {
+	return l.Output(LOG_LEVEL_INFO, 3, fmt.Sprintln("[Info]", i))
 }
 
-func (l *LoggerS) Warn(i ...interface{}) {
-	l.Output(LOG_LEVEL_WARN, 3, fmt.Sprintln("[Warn]", i))
+func (l *LoggerS) Error(i ...interface{}) error {
+	return l.Output(LOG_LEVEL_ERROR, 3, fmt.Sprintln("[Error]", i))
 }
 
-func (l *LoggerS) Fatal(i ...interface{}) {
-	l.Output(LOG_LEVEL_FATAL, 3, fmt.Sprintln("[Fatal]", i))
+func (l *LoggerS) Warn(i ...interface{}) error {
+	return l.Output(LOG_LEVEL_WARN, 3, fmt.Sprintln("[Warn]", i))
+}
+
+func (l *LoggerS) Fatal(i ...interface{}) error {
+	return l.Output(LOG_LEVEL_FATAL, 3, fmt.Sprintln("[Fatal]", i))
 }

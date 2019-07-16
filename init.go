@@ -32,7 +32,7 @@ func DefaultNew(f func() SLogConfig) (*LoggerS, error) {
 			return nil, err
 		}
 	} else {
-		file, err = os.OpenFile(filename, os.O_APPEND, os.ModeAppend)
+		file, err = os.OpenFile(filename, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
 		if err != nil {
 			return nil, err
 		}
