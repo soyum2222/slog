@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"runtime/debug"
 	"sync"
 	"time"
 )
@@ -125,4 +126,8 @@ func (l *LoggerS) Warn(i ...interface{}) error {
 
 func (l *LoggerS) Fatal(i ...interface{}) error {
 	return l.Output(LOG_LEVEL_FATAL, 3, fmt.Sprintln("[Fatal]", i))
+}
+
+func (l *LoggerS) Panic(i ...interface{}) error {
+	return l.Output(LOG_LEVEL_FATAL, 3, fmt.Sprintln("[Panic]", i)+string(debug.Stack()))
 }
