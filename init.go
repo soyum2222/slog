@@ -7,7 +7,7 @@ import (
 
 // is default new function
 // writer are configured by default
-func DefaultNew(f func() SLogConfig) (*LoggerS, error) {
+func DefaultNew(f func() SLogConfig) error {
 
 	cfg := f()
 	logger := new(LoggerS)
@@ -29,12 +29,12 @@ func DefaultNew(f func() SLogConfig) (*LoggerS, error) {
 		if os.IsNotExist(err) {
 			file, err = os.Create(filename)
 		} else {
-			return nil, err
+			return err
 		}
 	} else {
 		file, err = os.OpenFile(filename, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
 		if err != nil {
-			return nil, err
+			return err
 		}
 	}
 
@@ -49,7 +49,7 @@ func DefaultNew(f func() SLogConfig) (*LoggerS, error) {
 	}
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	writer.file = file
@@ -59,5 +59,7 @@ func DefaultNew(f func() SLogConfig) (*LoggerS, error) {
 	logger.writer = writer
 	logger.Logger = log.New(logger.writer, cfg.Prefix, cfg.LogFlag)
 
-	return logger, nil
+	Logger = logger
+
+	return nil
 }
