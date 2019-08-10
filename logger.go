@@ -109,7 +109,11 @@ func (l *LoggerS) Println(i ...interface{}) error {
 	return l.Output(1<<8-1, 3, fmt.Sprintln("[Println]", i))
 }
 func (l *LoggerS) Debug(i ...interface{}) error {
-	return l.Output(LOG_LEVEL_DEBUG, 3, fmt.Sprintln("[Debug]", i))
+	if l.debug {
+		return l.Output(LOG_LEVEL_DEBUG, 3, fmt.Sprintln("[Debug]", i))
+	} else {
+		return nil
+	}
 }
 
 func (l *LoggerS) Info(i ...interface{}) error {
@@ -129,5 +133,8 @@ func (l *LoggerS) Fatal(i ...interface{}) error {
 }
 
 func (l *LoggerS) Panic(i ...interface{}) error {
-	return l.Output(LOG_LEVEL_FATAL, 3, fmt.Sprintln("[Panic]", i)+string(debug.Stack()))
+	s := fmt.Sprint(i...)
+	l.Output(LOG_LEVEL_FATAL, 3, fmt.Sprintln("[Panic]", i)+string(debug.Stack()))
+	panic(s)
+
 }
