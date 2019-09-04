@@ -3,6 +3,7 @@ package slog
 import (
 	"log"
 	"os"
+	"path"
 )
 
 // is default new function
@@ -27,6 +28,7 @@ func DefaultNew(f func() SLogConfig) error {
 	file_info, err := os.Stat(filename)
 	if err != nil {
 		if os.IsNotExist(err) {
+			os.MkdirAll(path.Dir(filename), os.ModePerm)
 			file, err = os.Create(filename)
 		} else {
 			return err
