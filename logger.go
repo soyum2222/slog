@@ -108,33 +108,49 @@ func (l *LoggerS) Output(level uint8, skip int, s string) error {
 func (l *LoggerS) Println(i ...interface{}) error {
 	return l.Output(1<<8-1, 3, fmt.Sprintln("[Println]", i))
 }
-func (l *LoggerS) Debug(i ...interface{}) error {
+
+func (l *LoggerS) Debug(i ...interface{}) {
 	if l.debug {
-		return l.Output(LOG_LEVEL_DEBUG, 3, fmt.Sprintln("[Debug]", i))
-	} else {
-		return nil
+		err := l.Output(LOG_LEVEL_DEBUG, 3, fmt.Sprintln("[Debug]", i))
+		if err != nil {
+			fmt.Println("slog output error :", err)
+		}
 	}
 }
 
-func (l *LoggerS) Info(i ...interface{}) error {
-	return l.Output(LOG_LEVEL_INFO, 3, fmt.Sprintln("[Info]", i))
+func (l *LoggerS) Info(i ...interface{}) {
+	err := l.Output(LOG_LEVEL_INFO, 3, fmt.Sprintln("[Info]", i))
+	if err != nil {
+		fmt.Println("slog output error :", err)
+	}
 }
 
-func (l *LoggerS) Error(i ...interface{}) error {
-	return l.Output(LOG_LEVEL_ERROR, 3, fmt.Sprintln("[Error]", i))
+func (l *LoggerS) Error(i ...interface{}) {
+	err := l.Output(LOG_LEVEL_ERROR, 3, fmt.Sprintln("[Error]", i))
+	if err != nil {
+		fmt.Println("slog output error :", err)
+	}
 }
 
-func (l *LoggerS) Warn(i ...interface{}) error {
-	return l.Output(LOG_LEVEL_WARN, 3, fmt.Sprintln("[Warn]", i))
+func (l *LoggerS) Warn(i ...interface{}) {
+	err := l.Output(LOG_LEVEL_WARN, 3, fmt.Sprintln("[Warn]", i))
+	if err != nil {
+		fmt.Println("slog output error :", err)
+	}
 }
 
-func (l *LoggerS) Fatal(i ...interface{}) error {
-	return l.Output(LOG_LEVEL_FATAL, 3, fmt.Sprintln("[Fatal]", i))
+func (l *LoggerS) Fatal(i ...interface{}) {
+	err := l.Output(LOG_LEVEL_FATAL, 3, fmt.Sprintln("[Fatal]", i))
+	if err != nil {
+		fmt.Println("slog output error :", err)
+	}
 }
 
-func (l *LoggerS) Panic(i ...interface{}) error {
+func (l *LoggerS) Panic(i ...interface{}) {
 	s := fmt.Sprint(i...)
-	l.Output(LOG_LEVEL_FATAL, 3, fmt.Sprintln("[Panic]", i)+string(debug.Stack()))
+	err := l.Output(LOG_LEVEL_FATAL, 3, fmt.Sprintln("[Panic]", i)+string(debug.Stack()))
+	if err != nil {
+		fmt.Println("slog output error :", err)
+	}
 	panic(s)
-
 }
