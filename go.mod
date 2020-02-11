@@ -1,3 +1,3 @@
-module soyum2222/slog
+module github.com/soyum2222/slog
 
 go 1.13
