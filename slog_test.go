@@ -7,12 +7,12 @@ import (
 func TestSlog(t *testing.T) {
 
 	var err error
-	Logger, err = DefaultNew(func() SLogConfig {
+	err = DefaultNew(func() SLogConfig {
 		cfg := TestSLogConfig()
 		cfg.SplitType = SPLIT_TYPE_FILE_SIZE
 		cfg.Condition = 1
 		return cfg
-	})
+	}())
 	if err != nil {
 		panic(err)
 	}

@@ -1,6 +1,7 @@
 package slog
 
 import (
+	"io"
 	"log"
 	"os"
 	"path"
@@ -8,9 +9,8 @@ import (
 
 // is default new function
 // writer are configured by default
-func DefaultNew(f func() SLogConfig) error {
+func DefaultNew(cfg SLogConfig) error {
 
-	cfg := f()
 	logger := new(LoggerS)
 	logger.cfg = &cfg
 	logger.SetSliceType(cfg.SplitType)
@@ -54,10 +54,9 @@ func DefaultNew(f func() SLogConfig) error {
 		return err
 	}
 
-	writer.file = file
-	if cfg.Debug {
-		writer.stdout = os.Stdout
-	}
+	//writer.file = file
+	//writer.stdout = os.Stdout
+	writer.writer = io.MultiWriter(os.Stdout, file)
 	logger.writer = writer
 	logger.Logger = log.New(logger.writer, cfg.Prefix, cfg.LogFlag)
 

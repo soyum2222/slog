@@ -2,6 +2,7 @@ package slog
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"runtime/debug"
@@ -25,7 +26,7 @@ type LoggerS struct {
 	mu             sync.RWMutex
 }
 
-func (l *LoggerS) GetWriter() Writer {
+func (l *LoggerS) GetWriter() io.Writer {
 	return l.writer
 }
 
