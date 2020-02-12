@@ -19,24 +19,32 @@ func DefaultNew(cfg SLogConfig) error {
 
 	writer := new(logWriter)
 
-	if cfg.FileNameHandler == nil {
+	if cfg.FileNameHandler == nil && cfg.LogPath != "" {
 		cfg.FileNameHandler = cfg.name_handler
 	}
 	filename := cfg.FileNameHandler(0)
 
-	file := &os.File{}
-	file_info, err := os.Stat(filename)
-	if err != nil {
-		if os.IsNotExist(err) {
-			os.MkdirAll(path.Dir(filename), os.ModePerm)
-			file, err = os.Create(filename)
-		} else {
-			return err
-		}
-	} else {
-		file, err = os.OpenFile(filename, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
+	var file *os.File
+	var file_info os.FileInfo
+	var err error
+	if cfg.LogPath != "" {
+
+		file_info, err = os.Stat(filename)
 		if err != nil {
-			return err
+			if os.IsNotExist(err) {
+				err = os.MkdirAll(path.Dir(filename), os.ModePerm)
+				if err != nil {
+					return err
+				}
+				file, err = os.Create(filename)
+			} else {
+				return err
+			}
+		} else {
+			file, err = os.OpenFile(filename, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
@@ -48,15 +56,19 @@ func DefaultNew(cfg SLogConfig) error {
 		}
 	case SPLIT_TYPE_TIME_CYCLE:
 		logger.SetIntervalsTime(cfg.Condition)
+
 	}
 
 	if err != nil {
 		return err
 	}
 
-	//writer.file = file
-	//writer.stdout = os.Stdout
-	writer.writer = io.MultiWriter(os.Stdout, file)
+	if file == nil {
+		writer.writer = io.MultiWriter(os.Stdout)
+	} else {
+		writer.writer = io.MultiWriter(os.Stdout, file)
+	}
+
 	logger.writer = writer
 	logger.Logger = log.New(logger.writer, cfg.Prefix, cfg.LogFlag)
 

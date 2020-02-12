@@ -11,6 +11,7 @@ func TestSlog(t *testing.T) {
 		cfg := TestSLogConfig()
 		cfg.SplitType = SPLIT_TYPE_FILE_SIZE
 		cfg.Condition = 1
+		cfg.LogPath = "./log/"
 		return cfg
 	}())
 	if err != nil {

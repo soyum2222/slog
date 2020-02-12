@@ -3,6 +3,7 @@ package slog
 const (
 	SPLIT_TYPE_TIME_CYCLE = iota
 	SPLIT_TYPE_FILE_SIZE
+	SPLIT_TYPE_TIME_DALIY
 )
 
 //debug < info < warn < Error < Fatal
