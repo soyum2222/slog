@@ -93,6 +93,7 @@ func (l *LoggerS) Output(level uint8, skip int, s string) error {
 				l.Logger.Println("slog error by create new file:", err)
 				return
 			}
+
 			l.writer.ReloadeFile(file)
 		}()
 

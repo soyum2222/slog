@@ -1,7 +1,6 @@
 package slog
 
 import (
-	"io"
 	"log"
 	"os"
 	"path"
@@ -64,9 +63,10 @@ func DefaultNew(cfg SLogConfig) error {
 	}
 
 	if file == nil {
-		writer.writer = io.MultiWriter(os.Stdout)
+		writer.writer = MultiWriteCloser()
 	} else {
-		writer.writer = io.MultiWriter(os.Stdout, file)
+		writer.writer = MultiWriteCloser(file)
+
 	}
 
 	logger.writer = writer

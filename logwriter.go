@@ -32,9 +32,13 @@ func (w *logWriter) Write(b []byte) (n int, err error) {
 }
 func (w *logWriter) ReloadeFile(file *os.File) {
 	w.mu.Lock()
-	c, _ := w.writer.(io.WriteCloser)
-	//w.writer.Close()
-	c.Close()
-	w.writer = file
+
+	c, ok := w.writer.(io.WriteCloser)
+	if ok {
+		c.Close()
+	}
+
+	w.writer = MultiWriteCloser(file)
+
 	w.mu.Unlock()
 }
