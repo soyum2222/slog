@@ -18,9 +18,7 @@ func DefaultNew(cfg SLogConfig) error {
 
 	writer := new(logWriter)
 
-	if cfg.FileNameHandler == nil && cfg.LogPath != "" {
-		cfg.FileNameHandler = cfg.name_handler
-	}
+	cfg.FileNameHandler = cfg.name_handler
 	filename := cfg.FileNameHandler(0)
 
 	var file *os.File
