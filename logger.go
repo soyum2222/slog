@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-var Logger *LoggerS
+var logger *LoggerS
 
 type LoggerS struct {
 	*log.Logger
@@ -96,7 +96,6 @@ func (l *LoggerS) Output(level uint8, skip int, s string) error {
 
 			l.writer.ReloadeFile(file)
 		}()
-
 	}
 
 	l.mu.RLock()
@@ -107,8 +106,39 @@ func (l *LoggerS) Output(level uint8, skip int, s string) error {
 
 }
 
-func (l *LoggerS) Println(i ...interface{}) error {
-	return l.Output(1<<8-1, 3, fmt.Sprintln("[Println]", i))
+func Println(i ...interface{}) {
+	logger.Println(i...)
+}
+
+func Debug(i ...interface{}) {
+	logger.Debug(i...)
+}
+
+func Info(i ...interface{}) {
+	logger.Info(i...)
+}
+
+func Error(i ...interface{}) {
+	logger.Error(i...)
+}
+
+func Warn(i ...interface{}) {
+	logger.Warn(i...)
+}
+
+func Fatal(i ...interface{}) {
+	logger.Fatal(i...)
+}
+
+func Panic(i ...interface{}) {
+	logger.Panic(i...)
+}
+
+func (l *LoggerS) Println(i ...interface{}) {
+	err := l.Output(1<<8-1, 3, fmt.Sprintln("[Println]", i))
+	if err != nil {
+		fmt.Println("slog output error :", err)
+	}
 }
 
 func (l *LoggerS) Debug(i ...interface{}) {

@@ -10,11 +10,11 @@ import (
 // writer are configured by default
 func DefaultNew(cfg SLogConfig) error {
 
-	logger := new(LoggerS)
-	logger.cfg = &cfg
-	logger.SetSliceType(cfg.SplitType)
+	l := new(LoggerS)
+	l.cfg = &cfg
+	l.SetSliceType(cfg.SplitType)
 
-	logger.SetDebug(cfg.Debug)
+	l.SetDebug(cfg.Debug)
 
 	writer := new(logWriter)
 
@@ -24,11 +24,11 @@ func DefaultNew(cfg SLogConfig) error {
 	filename := cfg.FileNameHandler(0)
 
 	var file *os.File
-	var file_info os.FileInfo
+	var fileInfo os.FileInfo
 	var err error
 	if cfg.LogPath != "" {
 
-		file_info, err = os.Stat(filename)
+		fileInfo, err = os.Stat(filename)
 		if err != nil {
 			if os.IsNotExist(err) {
 				err = os.MkdirAll(path.Dir(filename), os.ModePerm)
@@ -49,12 +49,12 @@ func DefaultNew(cfg SLogConfig) error {
 
 	switch cfg.SplitType {
 	case SPLIT_TYPE_FILE_SIZE:
-		logger.SetMaxSize(cfg.Condition)
-		if file_info != nil {
-			logger.size = file_info.Size()
+		l.SetMaxSize(cfg.Condition)
+		if fileInfo != nil {
+			l.size = fileInfo.Size()
 		}
 	case SPLIT_TYPE_TIME_CYCLE:
-		logger.SetIntervalsTime(cfg.Condition)
+		l.SetIntervalsTime(cfg.Condition)
 
 	}
 
@@ -69,10 +69,10 @@ func DefaultNew(cfg SLogConfig) error {
 
 	}
 
-	logger.writer = writer
-	logger.Logger = log.New(logger.writer, cfg.Prefix, cfg.LogFlag)
+	l.writer = writer
+	l.Logger = log.New(l.writer, cfg.Prefix, cfg.LogFlag)
 
-	Logger = logger
+	logger = l
 
 	return nil
 }

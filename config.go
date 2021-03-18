@@ -19,33 +19,27 @@ type SLogConfig struct {
 	FileNameHandler func(i int) string //when splitting file get the new file name
 }
 
-func TestSLogConfig() SLogConfig {
-
-	return SLogConfig{
-		Debug:       true,
-		Condition:   24 * 60 * 60,
-		SplitType:   SPLIT_TYPE_TIME_CYCLE,
-		LogFileName: "applog",
-		FileSuffix:  "log",
-		Prefix:      "",
-		LogPath:     "./",
-		LogFlag:     log.Lshortfile | log.Ltime | log.Ldate,
-	}
+var TestSLogConfig = SLogConfig{
+	Debug:       true,
+	Condition:   24 * 60 * 60,
+	SplitType:   SPLIT_TYPE_TIME_CYCLE,
+	LogFileName: "applog",
+	FileSuffix:  "log",
+	Prefix:      "",
+	LogPath:     "./",
+	LogFlag:     log.Lshortfile | log.Ltime | log.Ldate,
 }
 
-func DefaultSLogConfig() SLogConfig {
-
-	return SLogConfig{
-		Level:       LOG_LEVEL_INFO,
-		Debug:       false,
-		Condition:   24 * 60 * 60,
-		SplitType:   SPLIT_TYPE_TIME_CYCLE,
-		LogFileName: "applog",
-		FileSuffix:  "log",
-		Prefix:      "",
-		LogPath:     "./",
-		LogFlag:     log.Lshortfile | log.Ltime | log.Ldate,
-	}
+var DefaultSLogConfig = SLogConfig{
+	Level:       LOG_LEVEL_INFO,
+	Debug:       false,
+	Condition:   24 * 60 * 60,
+	SplitType:   SPLIT_TYPE_TIME_CYCLE,
+	LogFileName: "applog",
+	FileSuffix:  "log",
+	Prefix:      "",
+	LogPath:     "./",
+	LogFlag:     log.Lshortfile | log.Ltime | log.Ldate,
 }
 
 func (cfg *SLogConfig) name_handler(count int) string {
