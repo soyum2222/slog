@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"sync"
 )
 
 // is default new function
@@ -69,6 +70,9 @@ func DefaultNew(cfg SLogConfig) error {
 
 	l.writer = writer
 	l.Logger = log.New(l.writer, cfg.Prefix, cfg.LogFlag)
+
+	l.skip = 4
+	l.mu = &sync.RWMutex{}
 
 	logger = l
 

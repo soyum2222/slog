@@ -12,9 +12,14 @@ import (
 
 var logger *LoggerS
 
+func GetLogger() *LoggerS {
+	return logger
+}
+
 type LoggerS struct {
 	*log.Logger
 	cfg            *SLogConfig //save setting
+	skip           int
 	debug          bool
 	split_type     uint8 //will determine LoggerS how to work
 	count          int   //number of split
@@ -23,7 +28,19 @@ type LoggerS struct {
 	btime          int64 //begin time
 	size           int64 //the number is byte
 	writer         Writer
-	mu             sync.RWMutex
+	mu             *sync.RWMutex
+}
+
+func (l *LoggerS) GetSkip() int {
+	return l.skip + 1
+}
+
+func (l *LoggerS) SetSkip(skip int) {
+	l.skip = skip
+}
+
+func (l *LoggerS) Copy() LoggerS {
+	return *l
 }
 
 func (l *LoggerS) GetWriter() io.Writer {
@@ -110,32 +127,67 @@ func Println(i ...interface{}) {
 	logger.Println(i...)
 }
 
+func Printf(format string, i ...interface{}) {
+	logger.Printf(format, i...)
+}
+
 func Debug(i ...interface{}) {
 	logger.Debug(i...)
+}
+
+func Debugf(format string, i ...interface{}) {
+	logger.Debugf(format, i)
 }
 
 func Info(i ...interface{}) {
 	logger.Info(i...)
 }
 
+func Infof(format string, i ...interface{}) {
+	logger.Infof(format, i...)
+}
+
 func Error(i ...interface{}) {
 	logger.Error(i...)
+}
+
+func Errorf(format string, i ...interface{}) {
+	logger.Errorf(format, i...)
 }
 
 func Warn(i ...interface{}) {
 	logger.Warn(i...)
 }
 
+func Warnf(format string, i ...interface{}) {
+	logger.Warnf(format, i...)
+}
+
 func Fatal(i ...interface{}) {
 	logger.Fatal(i...)
+}
+
+func Fatalf(format string, i ...interface{}) {
+	logger.Fatalf(format, i...)
 }
 
 func Panic(i ...interface{}) {
 	logger.Panic(i...)
 }
 
+func Panicf(format string, i ...interface{}) {
+	logger.Panicf(format, i...)
+}
+
 func (l *LoggerS) Println(i ...interface{}) {
-	err := l.Output(1<<8-1, 3, fmt.Sprintln("[Println]", i))
+	err := l.Output(1<<8-1, l.skip, fmt.Sprintln("[Println]", i))
+	if err != nil {
+		fmt.Println("slog output error :", err)
+	}
+}
+
+func (l *LoggerS) Printf(format string, i ...interface{}) {
+	err := l.Output(1<<8-1, l.skip, fmt.Sprintf("[Println] "+format, i...))
 	if err != nil {
 		fmt.Println("slog output error :", err)
 	}
@@ -143,7 +195,16 @@ func (l *LoggerS) Println(i ...interface{}) {
 
 func (l *LoggerS) Debug(i ...interface{}) {
 	if l.debug {
-		err := l.Output(LOG_LEVEL_DEBUG, 3, fmt.Sprintln("[Debug]", i))
+		err := l.Output(LOG_LEVEL_DEBUG, l.skip, fmt.Sprintln("[Debug]", i))
+		if err != nil {
+			fmt.Println("slog output error :", err)
+		}
+	}
+}
+
+func (l *LoggerS) Debugf(format string, i ...interface{}) {
+	if l.debug {
+		err := l.Output(LOG_LEVEL_DEBUG, l.skip, fmt.Sprintf("[Debug] "+format, i...))
 		if err != nil {
 			fmt.Println("slog output error :", err)
 		}
@@ -151,28 +212,56 @@ func (l *LoggerS) Debug(i ...interface{}) {
 }
 
 func (l *LoggerS) Info(i ...interface{}) {
-	err := l.Output(LOG_LEVEL_INFO, 3, fmt.Sprintln("[Info]", i))
+	err := l.Output(LOG_LEVEL_INFO, l.skip, fmt.Sprintln("[Info]", i))
+	if err != nil {
+		fmt.Println("slog output error :", err)
+	}
+}
+
+func (l *LoggerS) Infof(format string, i ...interface{}) {
+	err := l.Output(LOG_LEVEL_INFO, l.skip, fmt.Sprintf("[Info] "+format, i...))
 	if err != nil {
 		fmt.Println("slog output error :", err)
 	}
 }
 
 func (l *LoggerS) Error(i ...interface{}) {
-	err := l.Output(LOG_LEVEL_ERROR, 3, fmt.Sprintln("[Error]", i))
+	err := l.Output(LOG_LEVEL_ERROR, l.skip, fmt.Sprintln("[Error]", i))
+	if err != nil {
+		fmt.Println("slog output error :", err)
+	}
+}
+
+func (l *LoggerS) Errorf(format string, i ...interface{}) {
+	err := l.Output(LOG_LEVEL_ERROR, l.skip, fmt.Sprintf("[Error] "+format, i...))
 	if err != nil {
 		fmt.Println("slog output error :", err)
 	}
 }
 
 func (l *LoggerS) Warn(i ...interface{}) {
-	err := l.Output(LOG_LEVEL_WARN, 3, fmt.Sprintln("[Warn]", i))
+	err := l.Output(LOG_LEVEL_WARN, l.skip, fmt.Sprintln("[Warn]", i))
+	if err != nil {
+		fmt.Println("slog output error :", err)
+	}
+}
+
+func (l *LoggerS) Warnf(format string, i ...interface{}) {
+	err := l.Output(LOG_LEVEL_WARN, l.skip, fmt.Sprintf("[Warn] "+format, i...))
 	if err != nil {
 		fmt.Println("slog output error :", err)
 	}
 }
 
 func (l *LoggerS) Fatal(i ...interface{}) {
-	err := l.Output(LOG_LEVEL_FATAL, 3, fmt.Sprintln("[Fatal]", i))
+	err := l.Output(LOG_LEVEL_FATAL, l.skip, fmt.Sprintln("[Fatal]", i))
+	if err != nil {
+		fmt.Println("slog output error :", err)
+	}
+}
+
+func (l *LoggerS) Fatalf(format string, i ...interface{}) {
+	err := l.Output(LOG_LEVEL_FATAL, l.skip, fmt.Sprintf("[Fatal] "+format, i...))
 	if err != nil {
 		fmt.Println("slog output error :", err)
 	}
@@ -180,7 +269,16 @@ func (l *LoggerS) Fatal(i ...interface{}) {
 
 func (l *LoggerS) Panic(i ...interface{}) {
 	s := fmt.Sprint(i...)
-	err := l.Output(LOG_LEVEL_FATAL, 3, fmt.Sprintln("[Panic]", i)+string(debug.Stack()))
+	err := l.Output(LOG_LEVEL_FATAL, l.skip, fmt.Sprintln("[Panic]", i)+string(debug.Stack()))
+	if err != nil {
+		fmt.Println("slog output error :", err)
+	}
+	panic(s)
+}
+
+func (l *LoggerS) Panicf(format string, i ...interface{}) {
+	s := fmt.Sprint(i...)
+	err := l.Output(LOG_LEVEL_FATAL, l.skip, fmt.Sprintf("[Panic] "+format, i...)+string(debug.Stack()))
 	if err != nil {
 		fmt.Println("slog output error :", err)
 	}
